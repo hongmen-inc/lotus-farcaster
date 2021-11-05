@@ -29,6 +29,11 @@ EXEC_PATH="$(dirname $0)"
 OK="[\033[0;32m OK \033[0m]"
 KO="[\033[0;31m KO \033[0m]"
 
+if [ -n "$IUSER" ]
+then
+    IUSER_HOME=$(getent passwd "$IUSER" | cut -d: -f6)
+fi
+
 if [ "$(id -u)" -ne 0 ]
 then
 	echo -e "$KO : must be run as root"
@@ -56,7 +61,7 @@ fi
 echo -e "$OK"
 
 echo -n "Check if lotus-exporter-farcaster.py run properly : "
-r=$(source $IUSER_HOME/.lotus-exporter-farcaster/env/bin/activate && sudo -u "$IUSER" /usr/local/bin/lotus-exporter-farcaster.py)
+r=$(source "$IUSER_HOME/.lotus-exporter-farcaster/env/bin/activate" && sudo -u "$IUSER" /usr/local/bin/lotus-exporter-farcaster.py)
 if [ $(echo "$r" | grep -c 'lotus_scrape_execution_succeed {  } 1') -eq 0 ]
 then
     echo -e "$KO error encountered : "
@@ -64,7 +69,7 @@ then
     do
         echo -e "\t $a"
     done
-    echo "TODO : run manually : source $IUSER_HOME/.lotus-exporter-farcaster/env/bin/activate && sudo -u "$IUSER" /usr/local/bin/lotus-exporter-farcaster.py"
+    echo "TODO : run manually : source "$IUSER_HOME/.lotus-exporter-farcaster/env/bin/activate" && sudo -u "$IUSER" /usr/local/bin/lotus-exporter-farcaster.py"
     exit 1
 fi
 echo -e "$OK"
