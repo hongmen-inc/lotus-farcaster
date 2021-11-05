@@ -56,7 +56,7 @@ fi
 echo -e "$OK"
 
 echo -n "Check if lotus-exporter-farcaster.py run properly : "
-r=$(sudo -u "$IUSER" /usr/local/bin/lotus-exporter-farcaster.py)
+r=$(source $IUSER_HOME/.lotus-exporter-farcaster/env/bin/activate && sudo -u "$IUSER" /usr/local/bin/lotus-exporter-farcaster.py)
 if [ $(echo "$r" | grep -c 'lotus_scrape_execution_succeed {  } 1') -eq 0 ]
 then
     echo -e "$KO error encountered : "
@@ -64,7 +64,7 @@ then
     do
         echo -e "\t $a"
     done
-    echo "TODO : run manually : sudo -u "$IUSER" /usr/local/bin/lotus-exporter-farcaster.py"
+    echo "TODO : run manually : source $IUSER_HOME/.lotus-exporter-farcaster/env/bin/activate && sudo -u "$IUSER" /usr/local/bin/lotus-exporter-farcaster.py"
     exit 1
 fi
 echo -e "$OK"
@@ -74,7 +74,7 @@ r=$(sudo -u $IUSER sh -c "if [ -w $PROMETHEUS_NODE_EXPORTER_FOLDER ] ; then echo
 if [ $r -eq 0 ]
 then
     echo -e "$KO Cannot right to folder $PROMETHEUS_NODE_EXPORTER_FOLDER"
-    echo "TODO :" 
+    echo "TODO :"
     echo "  Option 1/ rerun the install script OR"
     echo "  Option 2/ manually give right permission to $IUSER to $PROMETHEUS_NODE_EXPORTER_FOLDER"
     exit 1
@@ -131,12 +131,12 @@ echo -e "$OK"
 echo -e "\033[0;33m"
 cat <<EOF
  ________________________________
-/ All good, the node is properly \ 
+/ All good, the node is properly \
 \ configured. !!!                /
  --------------------------------
         \   ^__^
          \  (oo)\_______
-            (__)\       )\/\ 
+            (__)\       )\/\
                 ||----w |
                 ||     ||
 EOF

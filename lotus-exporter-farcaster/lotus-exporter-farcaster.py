@@ -1,4 +1,4 @@
-#!/usr/bin/python3
+#!/usr/bin/env python3.8
 # -*- coding: utf-8 -*-
 # pylint: disable=C0301, W0511, W0603, W0703, R0914, R0912, R0915, R0902, R0201, C0302, C0103
 """

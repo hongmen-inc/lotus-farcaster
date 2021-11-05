@@ -24,6 +24,12 @@
 
 IUSER="$1"
 PROMETHEUS_NODE_EXPORTER_FOLDER="/var/lib/prometheus/node-exporter/" # DEFAULT UBUNTU LOCATION
+
+# specific for HM
+# link lotus node & miner directory to $IUSER home
+ln -sv /lotus/node $IUSER_HOME/.lotus
+ln -sv /lotus/miner $IUSER_HOME/.lotusminer
+
 EXEC_PATH="$(dirname $0)"
 if [ -n "$IUSER" ]
 then
@@ -52,20 +58,28 @@ then
     echo "Continuing anyway"
 fi
 
-echo 
+echo
 echo "Installing required debian packages : "
 echo "------------------------------------- "
-apt install python3-toml python3-aiohttp python3-pip prometheus-node-exporter 
+apt install -y python3.8 python3-toml python3-aiohttp python3-pip
 
-echo 
-echo "Install python packages : "
-echo "------------------------- "
-pip3 install py-multibase
+echo
+echo "Setting up a python virtual environment : "
+echo "----------------------------------------- "
+python3.8 -m pip install virtualenv -i https://pypi.tuna.tsinghua.edu.cn/simple
+mkdir -pv "$IUSER_HOME/.lotus-exporter-farcaster/"
+python3.8 -m virtualenv $IUSER_HOME/.lotus-exporter-farcaster/env
 
-echo 
+echo
+echo "Install python packages to virtual environment : "
+echo "------------------------------------------------ "
+source $IUSER_HOME/.lotus-exporter-farcaster/env/bin/activate
+pip install toml aiohttp py-multibase -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+echo
 echo "Check :"
 echo "------- "
-echo -n "prometheus-node-exporter : " 
+echo -n "prometheus-node-exporter : "
 r=$(curl -s -o - http://localhost:9100/metrics |wc -l 2>/dev/null)
 if [ "$r" -gt 0 ]
 then
@@ -91,7 +105,7 @@ mkdir -p "$IUSER_HOME/.lotus-exporter-farcaster/"
 cp "$EXEC_PATH/addresses.toml.example" "$IUSER_HOME/.lotus-exporter-farcaster/"
 chown "$IUSER" "$IUSER_HOME/.lotus-exporter-farcaster/"
 set +x
-cat << EOF 
+cat << EOF
 
 FARCASTER INSTALLATION COMPLETED
 
@@ -100,7 +114,7 @@ FARCASTER INSTALLATION COMPLETED
 TESTING : run the check.sh script :
 $EXEC_PATH/check.sh LOTUS_USER_USERNAME
 
-NEXT STEPS : 
+NEXT STEPS :
 - Add this node to your prometheus server
 - Add the farecaster dashboard to grafana (import through ui)
 - (Optional) Add knwown addresses and external wallets to $IUSER_HOME/.lotus-exporter-farcaster/
