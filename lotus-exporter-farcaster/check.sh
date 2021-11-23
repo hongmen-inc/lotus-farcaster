@@ -61,7 +61,7 @@ fi
 echo -e "$OK"
 
 echo -n "Check if lotus-exporter-farcaster.py run properly : "
-r=$(source "$IUSER_HOME/.lotus-exporter-farcaster/env/bin/activate" && sudo -u "$IUSER" /usr/local/bin/lotus-exporter-farcaster.py)
+r=$(source "$IUSER_HOME/.lotus-exporter-farcaster/env/bin/activate" && /usr/local/bin/lotus-exporter-farcaster.py)
 if [ $(echo "$r" | grep -c 'lotus_scrape_execution_succeed {  } 1') -eq 0 ]
 then
     echo -e "$KO error encountered : "
